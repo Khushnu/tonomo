@@ -227,6 +227,13 @@ class _ReservationAddWidgetState extends State<ItemAddWidget> {
                   quantity: quantityText.text,
                   location: locationText.text));
             });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                content: const Text('Item Saved Successfully')));
             Navigator.of(context).pop();
           },
           child: Container(
