@@ -431,7 +431,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                           shape: RoundedRectangleBorder(
                                                             borderRadius: BorderRadius.circular(20)
                                                           ),
-                                                          content: Text('${e.name} Reservation Deleted')));
+                                                          content: Text('${e.name} Reservation deleted Successfully')));
                                                     });
                                                   },
                                                   child: const Card(
