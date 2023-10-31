@@ -310,7 +310,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                     },
                                     cells: [
                                         DataCell(SizedBox(
-                                          width: e.isSelected ? screenWidth * 0.1 : 40,
+                                          width: e.isSelected ? screenWidth * 0.1 : 70,
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                                             children: [

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:provider/provider.dart';
+import 'package:tonomo/Provider/statemanage.dart';
+import 'package:tonomo/Services/dummyreservation.dart';
 import 'package:tonomo/Widgets/dashboard_widget_container.dart';
 import 'package:tonomo/Widgets/labeltext_widget.dart';
 import 'package:tonomo/main.dart';
@@ -13,12 +16,27 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
   Map<String, double> dataMap = {
-    "6 Available": 6,
+    "${reservationList.length} Available": reservationList.length.toDouble(),
   };
+  
+ Map<String, String> dataMapS = {
+    "Available": "0",
+  };
+  
+
+
   @override
   Widget build(BuildContext context) {
      screenHeight = MediaQuery.sizeOf(context).height; 
     screenWidth = MediaQuery.sizeOf(context).width;
+    var itemList = context.watch<StateManagement>().itemList;
+    var reserVationList = context.watch<StateManagement>().reserVationList;
+    dataMap = {
+    "${itemList.length} Available": itemList.length.toDouble(),
+  };
+  dataMapS = {
+    "Available": itemList.length.toString(),
+  };
     return Container(
       height: screenHeight , 
       width: widget.expandedWidth, 
@@ -40,6 +58,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             child: Center(
               child: PieChart(
                 dataMap: dataMap, 
+                legendOptions: LegendOptions(legendLabels: dataMapS),
                 chartRadius: 200, 
                 ringStrokeWidth: 10,
                 chartValuesOptions: const ChartValuesOptions(
@@ -48,9 +67,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   showChartValues: false, 
                   showChartValueBackground: false
                 ),
-              centerText: '6 Available',
+              centerText: '${itemList.length.toInt()} Available',
               centerTextStyle: const TextStyle(fontFamily: 'Inter', color: Colors.black, fontSize: 18),
-              colorList: const [Colors.purple],
+              colorList: const [Colors.purple, Colors.amber, Colors.pinkAccent, Colors.indigo],
               chartType: ChartType.ring, ),
             ),
             ), 
@@ -108,7 +127,65 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                  DashBoardContainerWidget(title: 'Open Observation', 
             height: screenHeight * 0.4 -20, 
             width: screenWidth * 0.4 - 50, 
-            child: const Text('ListView')
+            child:  ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: reserVationList.length,
+              itemBuilder: (_,index){
+                return Expanded(
+                  child: ExpansionTile(
+                    title: Text(reserVationList[index].name),
+                    children: [
+                      Container(
+                        height: screenHeight * 0.1 - 20, 
+                        padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200, 
+                       
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Item Name'),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(reserVationList[index].items),
+                                ],
+                              ), 
+                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('From '),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(reserVationList[index].from),
+                                ],
+                              ), 
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('To'),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(reserVationList[index].to),
+                                ],
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      )
+                    ],
+                  ),
+                );
+              })
             ), 
             DashBoardContainerWidget(title: 'Open Check-outs', 
             height: screenHeight * 0.4 -20, 
