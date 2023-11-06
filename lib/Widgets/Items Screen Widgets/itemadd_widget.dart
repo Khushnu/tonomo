@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tonomo/Constants/colors.dart';
 import 'package:tonomo/Provider/statemanage.dart';
 import 'package:tonomo/Services/dummymodel.dart';
 import 'package:tonomo/Widgets/labeltext_widget.dart';
@@ -22,6 +26,46 @@ class _ReservationAddWidgetState extends State<ItemAddWidget> {
   TextEditingController modelText = TextEditingController();
   TextEditingController brandText = TextEditingController();
   TextEditingController categoryText = TextEditingController();
+  File? image;
+  bool isImageLoading = true;
+   String? initalDropDown;
+  var dropDownItems = [
+    'Entertainment', 
+    'Computer', 
+    'Computer/Laptop', 
+    'Furniture',
+    'Audio', 
+  ];
+
+Future pickImageFunction() async {
+ 
+ try {
+    setState(() {
+   isImageLoading = false;
+ });
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+ 
+if (result != null) {
+   setState(() {
+     image = File(result.files.single.path!);
+     isImageLoading = false;
+   });
+
+}
+ } on PlatformException catch(e) {
+   print('file failed $e');
+ } 
+}
+  // Future pickImageFunction()async{
+  //   try {
+  //     final image = await ImagePicker().pickImage(source: ImageSource.gallery); 
+  //     if(image == null) return; 
+  //     final img = File(image.path); 
+  //     setState(() => this.image = img);
+  //   } on PlatformException catch(e) {
+  //     print('Failed to select image $e');
+  //   }
+  // }
 
   Future<void> showDates(TextEditingController text) async {
     final DateTime? pick = await showDatePicker(
@@ -143,6 +187,9 @@ class _ReservationAddWidgetState extends State<ItemAddWidget> {
                                   height: 10,
                                 ),
                                 TextFieldWidget(
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                     textEditingController: modelText,
                                     hintText: 'e.g 23141',
                                     textFieldWidth: screenWidth * 0.2),
@@ -176,6 +223,9 @@ class _ReservationAddWidgetState extends State<ItemAddWidget> {
                         ),
                         TextFieldWidget(
                             textEditingController: quantityText,
+                             inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly, 
+                                    ],
                             hintText: 'Quantity',
                             textFieldWidth: screenWidth * 0.2),
                         const SizedBox(
@@ -202,16 +252,62 @@ class _ReservationAddWidgetState extends State<ItemAddWidget> {
                         const SizedBox(
                           height: 10,
                         ),
-                        TextFieldWidget(
-                            textEditingController: categoryText,
-                            hintText: 'Category',
-                            textFieldWidth: screenWidth * 0.2),
+                       Container(
+                        width: screenWidth * 0.2,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white, 
+                          borderRadius: BorderRadius.circular(5)
+                        ),
+                         child: DropdownButtonHideUnderline(
+                           child: DropdownButton(
+                           value: initalDropDown,
+                            hint: const Text('Select Category'),
+                            items: dropDownItems.map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e)) ).toList(), onChanged: (value){
+                              setState(() {
+                                initalDropDown = value!;
+                              });
+                            }),
+                         ),
+                       )
                       ],
                     ),
                   ],
                 ),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: screenHeight * 0.2 - 21, 
+                width: screenWidth, 
+               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18), 
+                color: AllColors.kStatusWidgetCOlor.withOpacity(0.4)
+               ), 
+              child: Center(
+                child: image == null ? InkWell(
+                 onTap: () {
+                   setState(() {
+                       pickImageFunction();
+                   });
+                 },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('Images/image-gallery.png', height: 40,),
+                      const Text('Select Image'),
+                    ],
+                  ),
+                ) : isImageLoading ? const CircularProgressIndicator() : Image.file(image!, height: screenHeight * 0.2, width: screenWidth, fit: BoxFit.fill, ),
+              ),
+              ),
+            )
           ],
         ),
       ),
@@ -221,11 +317,13 @@ class _ReservationAddWidgetState extends State<ItemAddWidget> {
             setState(() {
               context.read<StateManagement>().addItem(DummyModel(
                   name: itemText.text,
-                  category: categoryText.text,
+                  category: initalDropDown!,
                   brand: brandText.text,
                   model: int.parse(modelText.text),
                   quantity: quantityText.text,
-                  location: locationText.text));
+                  location: locationText.text, 
+                  image: image!
+                  ));
             });
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 behavior: SnackBarBehavior.floating,

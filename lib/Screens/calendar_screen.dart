@@ -16,6 +16,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   bool isExpanded = true;
   @override
   Widget build(BuildContext context) {
+    
      screenHeight = MediaQuery.sizeOf(context).height; 
     screenWidth = MediaQuery.sizeOf(context).width; 
     expandedWidth = isExpanded ? screenWidth * 0.6 : screenWidth * 0.8 + 74 ; 

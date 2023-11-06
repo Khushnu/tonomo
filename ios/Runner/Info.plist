@@ -45,5 +45,27 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+<string>Need to upload image</string>
+<key>NSCameraUsageDescription</key>
+<string>Need to upload image</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Need to upload image</string>
+	<key>com.apple.security.files.user-selected.read-only</key>
+  <true/>
+	<key>NSOpenPanel</key>
+<dict>
+    <key>allowDirectories</key>
+    <true/>
+    <key>allowedFileTypes</key>
+    <array>
+        <string>public.item</string>
+    </array>
+</dict>
+
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>file</string>
+</array>
 </dict>
 </plist>

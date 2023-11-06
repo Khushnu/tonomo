@@ -20,6 +20,7 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
   TextEditingController toDate = TextEditingController();
   TextEditingController userText = TextEditingController();
   TextEditingController itemText = TextEditingController();
+ 
 
   Future<void> showDates(TextEditingController text) async {
     final DateTime? pick = await showDatePicker(
@@ -155,12 +156,20 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
       actions: [
         InkWell(
           onTap: () {
+            try {
+              var fromparse = DateFormat('dd/MM/yyyy').parseStrict(fromDate.text);
+            var toparse = DateFormat('dd/MM/yyyy').parseStrict(toDate.text);
+
+              Duration duration = toparse.difference(fromparse);
+              // int days = duration.inDays; 
+            
+
             setState(() {
               context.read<StateManagement>().addReserVation(DummyReservation(
                   name: itemText.text,
-                  from: fromDate.text,
-                  to: toDate.text,
-                  duration: '',
+                  from: fromparse,
+                  to: toparse,
+                  duration: '${duration.inDays ==0?duration.inHours:duration.inDays}',
                   user: userText.text,
                   items: itemText.text));
             });
@@ -173,6 +182,16 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 content: const Text('Reservation Saved Successfully')));
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                content:  Text('Error $e')));
+            }
+            
           },
           child: Container(
             height: screenHeight * 0.1 - 49,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tonomo/Constants/colors.dart';
 import 'package:tonomo/Provider/statemanage.dart';
@@ -441,9 +442,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                             ],
                                           ),
                                         ) ),
-                                            DataCell(Text(e.from.toString())),
-                                            DataCell(Text(e.to.toString())),
-                                            DataCell(Text(e.duration)),
+                                            DataCell(Text(DateFormat('dd/MM/yyyy').format(e.from))),
+                                            DataCell(Text(DateFormat('dd/MM/yyyy').format(e.to))),
+                                            DataCell(Text('${e.duration} Days')),
                                             DataCell(Text(e.user)),
                                             DataCell(Text(e.items))
                                           ]);
