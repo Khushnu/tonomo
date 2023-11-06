@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextFieldWidget extends StatefulWidget {
   const TextFieldWidget(
@@ -7,7 +8,7 @@ class TextFieldWidget extends StatefulWidget {
       required this.textFieldWidth,
       this.prefix,
       this.suffix,
-      this.textEditingController, this.onTap, this.height});
+      this.textEditingController, this.onTap, this.height, this.inputFormatters});
   final String hintText;
   final double textFieldWidth;
   final TextEditingController? textEditingController;
@@ -15,6 +16,7 @@ class TextFieldWidget extends StatefulWidget {
   final Icon? suffix;
   final Function()? onTap;
    final double? height;
+  final List<TextInputFormatter>? inputFormatters;
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
 }
@@ -26,6 +28,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       width: widget.textFieldWidth,
       height: widget.height,
       child: TextFormField(
+        inputFormatters: widget.inputFormatters,
         controller: widget.textEditingController,
         onTap: widget.onTap,
         decoration: InputDecoration(

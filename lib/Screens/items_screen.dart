@@ -264,6 +264,12 @@ class _ItemScreenState extends State<ItemScreen> {
                                       textColor: Colors.grey,
                                       fontSize: 16),
                                 ),
+                                 const DataColumn(
+                                  label: LabelTextWidget(
+                                      title: 'Image',
+                                      textColor: Colors.grey,
+                                      fontSize: 16),
+                                ),
                               ],
                               rows: itemList.isEmpty
                                   ? <DataRow>[
@@ -286,6 +292,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                           const DataCell(Text('')),
                                           const DataCell(Text('')),
                                           const DataCell(Text('')),
+                                          const DataCell(Text('')), 
                                           const DataCell(Text(''))
                                         ],
                                       ),
@@ -347,7 +354,8 @@ class _ItemScreenState extends State<ItemScreen> {
                                         DataCell(Text(e.location)),
                                         DataCell(Text(e.category)),
                                         DataCell(Text(e.brand)), 
-                                        DataCell(Text(e.model.toString()))
+                                        DataCell(Text(e.model.toString())), 
+                                        DataCell(Image.file(e.image,  height: 40, fit: BoxFit.fill,)), 
                                       ]);
                               })
                                 )

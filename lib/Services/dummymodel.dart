@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class DummyModel {
   final String name;
   final String quantity;
@@ -5,16 +7,18 @@ class DummyModel {
   final String category;
   final String brand;
   final int model;
+  final File image;
   bool isSelected;
  
 
-  DummyModel({
+  DummyModel( {
     required this.name,
     required this.quantity,
     required this.location,
     required this.category,
     required this.brand,
     required this.model,
+    required this.image,
     this.isSelected = false,
   });
 }

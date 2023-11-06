@@ -1,7 +1,7 @@
 class DummyReservation {
   final String name;
-  final String from;
-  final String to;
+  final DateTime from;
+  final DateTime to;
   final String duration;
   final String user;
   final String items;
