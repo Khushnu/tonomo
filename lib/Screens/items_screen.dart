@@ -18,11 +18,12 @@ class ItemScreen extends StatefulWidget {
 
 class _ItemScreenState extends State<ItemScreen> {
   String dropDownValue = 'name';
+  final searchText = TextEditingController();
   int isvalue = 12345;
   bool isSelected = false;
   List dropDownItems = <String>[
     'name',
-    'status',
+    'quantity',
     'brand',
     'model',
     'Ascending',
@@ -34,6 +35,7 @@ class _ItemScreenState extends State<ItemScreen> {
     screenHeight = MediaQuery.sizeOf(context).height;
     screenWidth = MediaQuery.sizeOf(context).width;
     var itemList = context.watch<StateManagement>().itemList;
+    
     return Scaffold(
         backgroundColor: AllColors.kDashboardBackground,
         body: SizedBox(
@@ -70,7 +72,7 @@ class _ItemScreenState extends State<ItemScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AllColors.kLeftMenuSelectionColor,
                       ),
-                      child: const Text('New item'),
+                      child: const Text('New item', style: TextStyle(color: Colors.white),),
                     )
                   ],
                 ),
@@ -93,7 +95,13 @@ class _ItemScreenState extends State<ItemScreen> {
                             SizedBox(
                                 height: 40,
                                 child: TextFieldWidget(
+                                  textEditingController: searchText,
                                   hintText: 'Search',
+                                  onchanged: (String? v){
+                                    setState(() {
+                                    context.read<StateManagement>().searchInItems(v);
+                                    });
+                                  },
                                   textFieldWidth: screenWidth * 0.2,
                                   suffix: const Icon(Icons.search),
                                 )),
@@ -123,6 +131,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                       onSelected: (String? value) {
                                         setState(() {
                                           dropDownValue = value!;
+                                          context.read<StateManagement>().sort(dropDownValue, true);
                                         });
                                       },
                                       child: const Row(
@@ -222,11 +231,13 @@ class _ItemScreenState extends State<ItemScreen> {
                               borderRadius: BorderRadius.circular(12)),
                           child: DataTable(
                               // showCheckboxColumn: true,
-                            
                               columns: [
                                 DataColumn(
-                                  
-                                  onSort: (columnIndex, ascending) {},
+                                  onSort: (columnIndex, ascending) {
+                                    setState(() {
+                                    
+                                    });
+                                  },
                                   // numeric: true,
                                   label: const LabelTextWidget(
                                       title: 'Name',
@@ -299,7 +310,6 @@ class _ItemScreenState extends State<ItemScreen> {
                                     ]
                                   : List.generate(itemList.length, (index) {
                                 var e = itemList[index];
-                            
                                 return DataRow(
                                     selected: e.isSelected,
                                     onSelectChanged: (bool? v){
@@ -309,7 +319,6 @@ class _ItemScreenState extends State<ItemScreen> {
                                           setState(() {
                                           isSelected = true;  
                                           } );
-                                          
                                         } else {
                                           isSelected = false;
                                         }
@@ -317,7 +326,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                     },
                                     cells: [
                                         DataCell(SizedBox(
-                                          width: e.isSelected ? screenWidth * 0.1 : 70,
+                                          width: e.isSelected ? screenWidth * 0.1 : 110,
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                                             children: [
@@ -332,7 +341,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                                 child: InkWell(
                                                   onTap: (){
                                                     setState(() {
-                                                      context.read<StateManagement>().removeItem(index);
+                                                      context.read<StateManagement>().removeItem(e);
                                                       ScaffoldMessenger.of(context).showSnackBar(
                                                         SnackBar(
                                                           behavior: SnackBarBehavior.floating,
@@ -357,7 +366,8 @@ class _ItemScreenState extends State<ItemScreen> {
                                         DataCell(Text(e.model.toString())), 
                                         DataCell(Image.file(e.image,  height: 40, fit: BoxFit.fill,)), 
                                       ]);
-                              })
+                              } 
+                              )
                                 )
                          
                           )

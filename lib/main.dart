@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tonomo/Provider/pagenavigations.dart';
 import 'package:tonomo/Provider/statemanage.dart';
 import 'package:tonomo/Screens/signin_screen.dart';
 
 void main() {
- runApp(ChangeNotifierProvider(create: (_)=> StateManagement(), child: const MyApp(),));  
+ runApp(
+  MultiProvider(providers: [
+ChangeNotifierProvider(create: (_)=> StateManagement()),
+ChangeNotifierProvider(create: (_)=>PageState())
+  ]
+  , child: const MyApp(),));  
 }
-
-
 double screenHeight = 0; 
 double screenWidth = 0;
 

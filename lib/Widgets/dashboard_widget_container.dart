@@ -14,7 +14,7 @@ class DashBoardContainerWidget extends StatefulWidget {
   final double? height;
   final double? width;
   final Widget? child;
-  final Color titleColor;
+  final Color? titleColor;
   @override
   State<DashBoardContainerWidget> createState() =>
       _DashBoardContainerWidgetState();
@@ -36,13 +36,12 @@ class _DashBoardContainerWidgetState extends State<DashBoardContainerWidget> {
       ),
       child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        
         children: [
           Container( 
             width: screenWidth,
-            decoration: BoxDecoration(
-              color: widget.titleColor,
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
+            decoration: const BoxDecoration(
+             // color: widget.titleColor,
+              borderRadius:  BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Text(widget.title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),

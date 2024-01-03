@@ -31,7 +31,7 @@ class _StepperWidgetState extends State<StepperWidget> {
 
     return SizedBox(
       height: screenHeight * 0.4 + 70,
-      width: screenWidth * 0.3 - 120,
+      width: screenWidth * 0.3 - 110,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
        
@@ -43,7 +43,7 @@ class _StepperWidgetState extends State<StepperWidget> {
               steps: [
                 Step(
                   title: Transform.translate(
-                    offset: const Offset(-67, 50),
+                    offset: const Offset(-72, 50),
                     child: Row(
                       children: [
                         Text(format),
@@ -129,7 +129,7 @@ class _StepperWidgetState extends State<StepperWidget> {
                           ),
                          
                           Transform.translate(
-                            offset: const Offset(-12, 0),
+                            offset: const Offset(-13, 0),
                             child: Container(
                               height: 10,
                               width: 10,

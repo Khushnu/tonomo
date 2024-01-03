@@ -1,8 +1,10 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tonomo/Constants/colors.dart';
 import 'package:tonomo/Constants/leftmenuitems.dart';
+import 'package:tonomo/Provider/pagenavigations.dart';
 import 'package:tonomo/Screens/calendar_screen.dart';
 import 'package:tonomo/Screens/dashboard_screen.dart';
 import 'package:tonomo/Screens/items_screen.dart';
@@ -18,11 +20,13 @@ class LeftSideMenuWidgett extends StatefulWidget {
       this.isExpanded = true,
       required this.ontap,
       required this.onExpand,
-      required this.changePage});
+      required this.changePage, required this.bottomNameButton, required this.isBottomMenu});
 
   final double leftContinerHegit;
   final double leftContainerWidth;
   final bool isExpanded;
+  final bool isBottomMenu;
+  final Function() bottomNameButton;
   final Function() ontap;
   final Function() onExpand;
   final Function(Widget) changePage;
@@ -31,20 +35,24 @@ class LeftSideMenuWidgett extends StatefulWidget {
 }
 
 class _LeftSideMenuWidgettState extends State<LeftSideMenuWidgett> {
-  var currentSlected = leftMenuItems[0];
+  // var currentSlected = leftMenuItems[0];
   Widget seltedP = const DashBoardScreen();
 
-  @override
-  void initState() {
-    super.initState();
-    currentSlected = leftMenuItems[0];
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   currentSlected = leftMenuItems[0];
+  // }
 
   @override
   Widget build(BuildContext context) {
     bool isExpanded = widget.isExpanded;
+    bool isBottomContainer = widget.isBottomMenu;
+    // var currentSelected = context.watch<PageState>().leftMenu;
+    // var isslect = context.watch<PageState>().isSlect;
     // screenHeight = MediaQuery.sizeOf(context).height;
     // screenWidth = MediaQuery.sizeOf(context).width;
+    int currentSelect=context.watch<PageState>().currentSelect;
     return Container(
       height: widget.leftContinerHegit,
       width: widget.leftContainerWidth,
@@ -93,39 +101,55 @@ class _LeftSideMenuWidgettState extends State<LeftSideMenuWidgett> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: leftMenuItems.length,
                 itemBuilder: (_, index) {
-                  bool isSelected = currentSlected == leftMenuItems[index];
+             bool     isslect = currentSelect == index;
                   var data = leftMenuItems[index];
                   return Padding(
                     padding: const EdgeInsets.all(3.0),
                     child: GestureDetector(
                       onTap: () {
+                        var pState=context.read<PageState>();
                         if (leftMenuItems[index] == leftMenuItems[0]) {
-                          widget.changePage(DashBoardScreen(
+                        pState.updatePage=DashBoardScreen(
                             expandedWidth:
                                 isExpanded ? screenWidth + 40 : screenWidth,
-                          ));
+                          );
+                          context.read<PageState>().currentSelect=0;
+                          // widget.changePage(DashBoardScreen(
+                          //   expandedWidth:
+                          //       isExpanded ? screenWidth + 40 : screenWidth,
+                          // ));
                         } else if (leftMenuItems[index] == leftMenuItems[1]) {
-                          widget.changePage(CalendarScreen(
+                          pState.updatePage=CalendarScreen(
                             width: isExpanded ? screenWidth : screenWidth,
-                          ));
+                            
+                          );
+                          context.read<PageState>().currentSelect=1;
+                          // widget.changePage(CalendarScreen(
+                          //   width: isExpanded ? screenWidth : screenWidth,
+                          // ));
                         } else if (leftMenuItems[index] == leftMenuItems[2]) {
-                          widget.changePage(const ItemScreen());
+                         pState.updatePage=const ItemScreen();
+                         context.read<PageState>().currentSelect=2;
+                          // widget.changePage(const ItemScreen());
                         } else if (leftMenuItems[index] == leftMenuItems[3]) {
-                          widget.changePage(const UserScreen());
+                            pState.updatePage=const UserScreen();
+                            context.read<PageState>().currentSelect=3;
+                          // widget.changePage(const UserScreen());
                         } else if (leftMenuItems[index] == leftMenuItems[4]) {
-                          widget.changePage(const ReservationScreen());
+                          pState.updatePage=const ReservationScreen(); 
+                          context.read<PageState>().currentSelect=4; // widget.changePage(const ReservationScreen());
                         } else {
                           widget.changePage(const Text('error'));
                         }
-                        setState(() {
-                          currentSlected = leftMenuItems[index];
-                        });
+                        // setState(() {
+                        //   context.read<PageState>().updateSelect = leftMenuItems[index];
+                        // });
                       },
                       child: Container(
                         height: 45,
                         width: isExpanded ? 100 : 40,
                         decoration: BoxDecoration(
-                            color: isSelected
+                            color: isslect
                                 ? AllColors.kLeftMenuSelectionColor
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(12)),
@@ -139,7 +163,7 @@ class _LeftSideMenuWidgettState extends State<LeftSideMenuWidgett> {
                               Image.asset(
                                 data.icon,
                                 height: 25,
-                                color: isSelected ? Colors.white : Colors.black,
+                                color: isslect ? Colors.white : Colors.black,
                               ),
                               const SizedBox(
                                 width: 15,
@@ -149,7 +173,7 @@ class _LeftSideMenuWidgettState extends State<LeftSideMenuWidgett> {
                                 style: TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 15,
-                                    color: isSelected
+                                    color: isslect
                                         ? Colors.white
                                         : Colors.black),
                               ),
@@ -186,7 +210,61 @@ class _LeftSideMenuWidgettState extends State<LeftSideMenuWidgett> {
                 style: const TextStyle(fontSize: 15),
               )
             ],
-          )
+          ), 
+          SizedBox(
+            height: screenHeight* 0.2,
+          ),
+          if(!isBottomContainer)
+          SizedBox(
+            height: screenHeight * 0.2 - 35 ,
+          ),
+          if(isBottomContainer)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Transform.translate(
+              offset: const Offset(2, 14),
+              child: Container(
+                height: screenHeight * 0.2 - 50, 
+                width:  screenWidth , 
+               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12), 
+                color: Colors.grey.shade300
+               ),
+               child: const Column(
+                children: [
+                 ListTile(
+                  title: Text('Signout'), 
+                  trailing:  Icon(Icons.exit_to_app),
+                 )
+                ],
+               ),
+              ),
+            ),
+          ),
+         Padding(
+           padding: const EdgeInsets.all(9.0),
+           child: Container(
+            height: screenHeight * 0.1 - 40, 
+            width:  isExpanded ? screenWidth * 0.6 : 65, 
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300, 
+              borderRadius: BorderRadius.circular(20)
+            ),
+            child:  Row(  
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+              const CircleAvatar(
+                child: Text('WA'), 
+              ), 
+                Text(isExpanded ?'Waleed Ahmad' : '') , 
+               if(isExpanded)  
+               IconButton(onPressed: widget.bottomNameButton,
+               icon:  const Icon(Icons.keyboard_arrow_up))
+            ],),
+           ),
+         )
         ],
       ),
     );

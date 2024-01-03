@@ -178,6 +178,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 16,
                   ),
                   SignInButtonWidget(
+                    height: screenHeight < 700 ? screenHeight * 0.1 - 40 : screenHeight * 0.1 - 40,
                       width: screenWidth * 0.4,
                       title: 'Continue',
                       bgColor: const Color(0xffF6F6F6), 

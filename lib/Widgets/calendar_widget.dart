@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tonomo/Constants/colors.dart';
 import 'package:tonomo/Model/topbuttonsmodel.dart';
 import 'package:tonomo/Provider/statemanage.dart';
+import 'package:tonomo/Services/dummyreservation.dart';
 import 'package:tonomo/Widgets/buttons_widget.dart';
 import 'package:tonomo/Widgets/calendarpagebuttons_widget.dart';
 import 'package:tonomo/Widgets/labeltext_widget.dart';
@@ -312,6 +313,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                 // String dy = DateFormat('EEE').format(day);
                                 Color tc = Colors.grey;
                                 Color bg = Colors.white;
+                                Color resreveColor = Colors.white;
                                 if (month == day.month && year == day.year) {
                                   tc = Colors.black;
                                 }
@@ -322,67 +324,73 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                   bgcolor = Colors.blue;
                                   bg = Colors.yellow.shade50;
                                 }
-                                    var reservationDay = reservation.where((element) =>
-                                    element.from.year == day.year && 
-                                    element.from.month == day.month &&
-                                    element.from.day == day.day); 
-
-                                   var reservationToDay = reservation.where((element) =>
-                                    element.to.year == day.year && 
-                                    element.to.month == day.month &&
-                                    element.to.day == day.day); 
-
-                                    // if(reservation.any((element) => day.isBefore(reservation[1].from.subtract(Duration(days: 1))) && day.isAfter(reservation[1].to.add(Duration(days: 1))))){
-                                    //   tc = Colors.yellow;
-                                    // }
-                                   
-                                    for(var reser in reservation){
-                                        DateTime dayBefore=reser.from.subtract(const Duration(days: 1));
-                                        DateTime dayAfter=reser.to.add(const Duration(days: 1));
-                                        bool isAV=day.isBefore(dayBefore)&&day.isAfter(dayAfter);
-                                        if(isAV){
-                                          tc=Colors.yellow;
-                                          bg=Colors.red.withOpacity(.5);
-                                        }}
-                                       
-                                // if (day.year == initialDat.year &&
-                                //     day.month == initialDat.month &&
-                                //     day.day == initialDat.day) {
-                                //   tc = Colors.blue;
-                                //   bg = Colors.yellow.shade50;
-                                // }
+                         
+                                bool sTextReservationDay = reservation.any(
+                                    (element) =>
+                                        (element.from.year==day.year&&element.from.month==day.month&&element.from.day==day.day)||
+                                        (element.to.year==day.year&&element.to.month==day.month&&element.to.day==day.day)
+                                            );
+                                             var reservationDay = reservation.where(
+                                    (element) =>
+                                        // (element.from.year==day.year&&element.from.month==day.month&&element.from.day==day.day)||
+                                        // (element.to.year==day.year&&element.to.month==day.month&&element.to.day==day.day)
+                                        element.from.
+                                        isBefore(
+                                            day.add(const Duration(days: 1))) &&
+                                        element.to.isAfter(day.subtract(
+                                        const Duration(days: 1)))
+                                            );
+                                if (reservationDay.isNotEmpty) {
+                                  tc = Colors.black;
+                                  resreveColor = Colors.green.withOpacity(.8);
+                                }
                                 var selec = selectedDate;
                                 selec = day;
                                 if (kDebugMode) {
                                   print(da);
                                 }
-                                return Container(
-                                  height: 90,
-                                  width: 60,
-                                  color: bg,
-                                  padding: const EdgeInsets.all(12),
-                                  alignment: Alignment.topRight,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        selec.day.toString(),
-                                        style: TextStyle(
-                                          color: tc,
-                                          fontFamily: 'Inter',
-                                          fontSize: 18,
-                                        ),
-                                      
-                                      ), 
-                                      const SizedBox(
-                                        height: 5,
+                                return Column(
+                                 mainAxisAlignment: MainAxisAlignment.center,
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 80,
+                                      width: screenWidth,
+                                      color: bg,
+                                      // padding: const EdgeInsets.all(12),
+                                      alignment: Alignment.topRight,
+                                      child: 
+                                          Text(
+                                            "${selec.day}",
+                                            style: TextStyle(
+                                              color: tc,
+                                              fontFamily: 'Inter',
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                         
+                                        
+                                          //   reservationDay.isEmpty ? const Text('') :
+                                          // Text( reservationDay.map((e) => e.name ).join(','), style: TextStyle(color: tc),),
+                                    
+                                          //  reservationToDay.isEmpty ? const Text('') :
+                                          // Text( reservationToDay.map((e) => e.name ).join(','), style: TextStyle(color: tc))
+                                        
                                       ),
-                                      reservationDay.isEmpty ? const Text('') :
-                                    Text( reservationDay.map((e) => e.name ).join(','), style: TextStyle(color: tc),), 
-
-                                     reservationToDay.isEmpty ? const Text('') :
-                                    Text( reservationToDay.map((e) => e.name ).join(','), style: TextStyle(color: tc))
-                                    ],
-                                  ),
+                                    
+                                     reservationDay.isEmpty
+                                              ? const Text('') : Padding(
+                                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                                child: Container(
+                                                    width: 150,
+                                                    height: 20,
+                                                    alignment: Alignment.topLeft,
+                                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                                    color: resreveColor,
+                                                    child: sTextReservationDay? Text(reservation.map((e) => e.name).join('')):const SizedBox(), // Omit reservation names
+                                                  ),
+                                              )
+                                  ],
                                 );
                               }));
                             })
@@ -394,7 +402,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 //-------------------------------------Show Weekends When Selected -------------------------------------------------
                 if (currentSelected == weekButtonList[1])
                   Container(
-                    height: screenHeight * 0.6,
+                    height: screenHeight * 0.6 + 40,
                     width: screenWidth * 0.9,
                     color: Colors.white,
                     child: Align(
@@ -488,25 +496,29 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                                       BorderRadius.circular(
                                                           12)),
                                               child: Text(formattedText))),
-                                          ...List.generate(
-                                              7,
-                                              (index) {
-                                                DateTime dayC = DateTime(
-                                            selectedDate.year,
-                                            selectedDate.month,
-                                            DateTime.now().day + index);
-                                    bool isCurrentDateC =
-                                            (dayC.year == initialDat.year &&
-                                                dayC.month == initialDat.month &&
-                                                dayC.day == initialDat.day);
-                                               return DataCell(Container(
-                                                    width: 110,
-                                                    height: 38,
-                                                    decoration: BoxDecoration(
-                                                      color: isCurrentDateC &&isCurrentTime ? Colors.amber : Colors.transparent, 
-                                                      borderRadius: BorderRadius.circular(12)
-                                                    ),
-                                                  ));})
+                                          ...List.generate(7, (index) {
+                                            DateTime dayC = DateTime(
+                                                selectedDate.year,
+                                                selectedDate.month,
+                                                DateTime.now().day + index);
+                                            bool isCurrentDateC =
+                                                (dayC.year == initialDat.year &&
+                                                    dayC.month ==
+                                                        initialDat.month &&
+                                                    dayC.day == initialDat.day);
+                                            return DataCell(Container(
+                                              width: 110,
+                                              height: 38,
+                                              decoration: BoxDecoration(
+                                                  color: isCurrentDateC &&
+                                                          isCurrentTime
+                                                      ? Colors.amber
+                                                      : Colors.transparent,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12)),
+                                            ));
+                                          })
                                         ]);
                                       })
                                     ]),
@@ -517,7 +529,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                       ),
                     ),
                   ),
-
 
 //---------------------------------------------------Shows Time When selected ------------------------------------------------------------
 
@@ -635,117 +646,183 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             child: Padding(
               padding: const EdgeInsets.all(8.0).copyWith(top: 2),
               child: Container(
-                height: screenHeight * 0.8,
-                width: screenWidth * 0.2 - 100,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                    color: Colors.white),
-                child: Column(
-                  children: [
-                    Container(
+                  height: screenHeight * 0.8,
+                  width: screenWidth * 0.2 - 100,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                      color: Colors.white),
+                  child: Column(
+                    children: [
+                      Container(
                         height: screenHeight * 0.1 - 40,
-                width: screenWidth  , 
-               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12), 
-                ), color: AllColors.kReservationWidgetColor, 
-                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 2, offset: Offset(1, 1))]
-               ),
-               child: const Center(child: Text('Reservations', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                             // padding: const EdgeInsets.all(10).copyWith(top: 8, left: 5, right: 5, bottom: 5),
-                              itemCount: reservation.length,
-                              itemBuilder: (_, index) {
-                               
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    height: screenHeight * 0.1, 
-                                    width:  screenWidth, 
-                                    decoration:  BoxDecoration(
-                                      color: Colors.grey.shade200, 
-                                      borderRadius: BorderRadius.circular(12)
+                        width: screenWidth,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: AllColors.kReservationWidgetColor,
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Colors.grey,
+                                  blurRadius: 2,
+                                  offset: Offset(1, 1))
+                            ]),
+                        child: const Center(
+                          child: Text(
+                            'Reservations',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: reservation.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'Images/no.jpg',
+                                      scale: 10,
                                     ),
-                                   child: Column(
-                                    children: [
-                                      Container(
-                                        height: screenHeight * 0.1 - 60, 
-                                        width: screenWidth, 
-                                         decoration:  BoxDecoration(
-                                      color: AllColors.kOpenCheckoutColor, 
-                                      borderRadius: BorderRadius.circular(12)
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    const Text(' Reservation Found'),
+                                  ],
+                                ),
+                              )
+                            : ListView.builder(
+                                // padding: const EdgeInsets.all(10).copyWith(top: 8, left: 5, right: 5, bottom: 5),
+                                itemCount: reservation.length,
+                                itemBuilder: (_, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height: screenHeight * 0.1 + 40,
+                                      width: screenWidth,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey.shade200,
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                      child: Column(
                                         children: [
-                                          const Text('User name :'), 
+                                          Container(
+                                            height: screenHeight * 0.1 - 60,
+                                            width: screenWidth,
+                                            decoration: BoxDecoration(
+                                                color: AllColors
+                                                    .kOpenCheckoutColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(12)),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  const Text('User name :'),
+                                                  const SizedBox(
+                                                    width: 2,
+                                                  ),
+                                                  Text(reservation[index].name),
+                                                  const Spacer(),
+                                                  const Text('Item Name :'),
+                                                  const SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text(reservation[index].items)
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                           const SizedBox(
-                                            width: 5,
+                                            height: 10,
                                           ),
-                                          Text(reservation[index].name), 
-                                          const Spacer(),
-                                          const Text('Item :'),
-                                           const SizedBox(
-                                            width: 5,
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            child: Row(
+                                              children: [
+                                                const Text('Assigned User :'),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  reservation[index].user,
+                                                  style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                          Text(reservation[index].items)
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    const LabelTextWidget(
+                                                        title: 'From',
+                                                        textColor: Colors.black,
+                                                        fontSize: 15),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(DateFormat('dd-MMM')
+                                                        .format(
+                                                            reservation[index]
+                                                                .from)),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    const LabelTextWidget(
+                                                        title: 'To',
+                                                        textColor: Colors.black,
+                                                        fontSize: 15),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(DateFormat('dd-MMM')
+                                                        .format(
+                                                            reservation[index]
+                                                                .to)),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    const LabelTextWidget(
+                                                        title: 'Duration',
+                                                        textColor: Colors.black,
+                                                        fontSize: 15),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                        '${reservation[index].duration} Days'),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),
-                                      ), 
-                                      const SizedBox(
-                                        height: 10,
-                                      ), 
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                           Column(
-                                           
-                                             children: [
-                                               const LabelTextWidget(title: 'From', textColor: Colors.black, fontSize: 15), 
-                                        const SizedBox(
-                                          width: 10,
-                                        ),  Text(DateFormat('dd-MMM').format(reservation[index].from)),
-                                             ],
-                                           ), 
-                                            Column(
-                                           
-                                             children: [
-                                               const LabelTextWidget(title: 'To', textColor: Colors.black, fontSize: 15), 
-                                        const SizedBox(
-                                          width: 10,
-                                        ),  Text(DateFormat('dd-MMM').format(reservation[index].to)),
-                                             ],
-                                           ),
-                                            Column(
-                                           
-                                             children: [
-                                               const LabelTextWidget(title: 'Duration', textColor: Colors.black, fontSize: 15), 
-                                        const SizedBox(
-                                          width: 10,
-                                        ),  Text('${reservation[index].duration} Days'),
-                                             ],
-                                           ),
-                                                                          
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                   ),
-                                  ),
-                                );
-                              }),
-                    ),
-                  ],
-                )
-              ),
+                                  );
+                                }),
+                      ),
+                    ],
+                  )),
             ),
           ),
       ],

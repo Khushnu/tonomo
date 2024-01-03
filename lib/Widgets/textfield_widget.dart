@@ -8,7 +8,7 @@ class TextFieldWidget extends StatefulWidget {
       required this.textFieldWidth,
       this.prefix,
       this.suffix,
-      this.textEditingController, this.onTap, this.height, this.inputFormatters});
+      this.textEditingController, this.onTap, this.height, this.inputFormatters, this.onchanged});
   final String hintText;
   final double textFieldWidth;
   final TextEditingController? textEditingController;
@@ -16,6 +16,7 @@ class TextFieldWidget extends StatefulWidget {
   final Icon? suffix;
   final Function()? onTap;
    final double? height;
+   final Function(String?)? onchanged;
   final List<TextInputFormatter>? inputFormatters;
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
@@ -31,6 +32,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         inputFormatters: widget.inputFormatters,
         controller: widget.textEditingController,
         onTap: widget.onTap,
+        onChanged: widget.onchanged,
         decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 20),
             hintText: widget.hintText,

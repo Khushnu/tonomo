@@ -3,6 +3,7 @@ import 'package:tonomo/Screens/home_screen.dart';
 import 'package:tonomo/Screens/signup_screen.dart';
 import 'package:tonomo/Widgets/signin_withgoogle_button.dart';
 import 'package:tonomo/Widgets/signinbutton_widget.dart';
+import 'package:tonomo/Widgets/spacer_widget.dart';
 import 'package:tonomo/Widgets/textfield_widget.dart';
 import 'package:tonomo/main.dart';
 
@@ -18,26 +19,30 @@ class _SigninScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.sizeOf(context).height;
     screenWidth = MediaQuery.sizeOf(context).width;
+    print(screenHeight);
     return Scaffold(
       backgroundColor: const Color(0xffFAFAFA),
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: 20,
-            ),
+           const SSSpacerWidget(
+            height: 20,
+           ),
             const Text(
               'tonomo',
               style: TextStyle(
-                  fontFamily: 'Altro', fontSize: 28, color: Colors.black),
+                  fontFamily: 'Altro', 
+                  fontSize: 28, 
+                  color: Colors.black),
             ),
-            const SizedBox(
+            const SSSpacerWidget(
               height: 20,
             ),
-            const SizedBox(
-              height: 25,
+            const SSSpacerWidget(
+              height: 15,
             ),
+          
             const Text(
               'Welcome Back!',
               style: TextStyle(
@@ -61,7 +66,7 @@ class _SigninScreenState extends State<SignInScreen> {
               height: 35,
             ),
             Container(
-              height: screenHeight * 0.5 - 20,
+              height: screenHeight < 700 ? screenHeight * 0.5  :  screenHeight * 0.5 +20,
               width: screenWidth * 0.4 - 50,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -70,19 +75,19 @@ class _SigninScreenState extends State<SignInScreen> {
                   border: Border.all(color: Colors.grey.withOpacity(0.3))),
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 10,
+                   SizedBox(
+                    height:screenHeight < 700  ? 5 : 10,
                   ),
                   const SignInWithGoogleButton(),
-                  const SizedBox(
-                    height: 16,
+                  SizedBox(
+                    height:screenHeight < 700  ? 10 : 16,
                   ),
                   const Text('- OR -'),
                   const SizedBox(
                     height: 37,
                   ),
                   Container(
-                    height: screenHeight * 0.3 - 40,
+                    height:screenHeight < 700 ? screenHeight * 0.3: screenHeight * 0.3 - 20,
                     width: screenWidth * 0.5,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -104,6 +109,7 @@ class _SigninScreenState extends State<SignInScreen> {
                           height: 5,
                         ),
                         TextFieldWidget(
+                          height: screenHeight < 700 ? screenHeight * 0.1 - 40 : screenHeight * 0.1 - 40,
                           hintText: 'Enter your email',
                           textFieldWidth: screenWidth * 0.5 - 40,
                         ),
@@ -120,6 +126,7 @@ class _SigninScreenState extends State<SignInScreen> {
                           height: 5,
                         ),
                         TextFieldWidget(
+                          height: screenHeight < 700 ? screenHeight * 0.1 - 40 : screenHeight * 0.1 - 40,
                           hintText: 'Enter your password',
                           textFieldWidth: screenWidth * 0.5 - 40,
                           prefix: const Icon(Icons.visibility_off),
@@ -134,7 +141,8 @@ class _SigninScreenState extends State<SignInScreen> {
                     height: 16,
                   ),
                   SignInButtonWidget(
-                      width: screenWidth * 0.4,
+                    height: screenHeight < 700 ? screenHeight * 0.1 - 80 : screenHeight * 0.1 - 60,
+                      width:  screenWidth * 0.4,
                       title: 'Sign In',
                       bgColor: const Color(0xffF6F6F6), 
                       ontap: (){

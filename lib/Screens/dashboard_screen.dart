@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:tonomo/Constants/colors.dart';
+import 'package:tonomo/Provider/pagenavigations.dart';
 import 'package:tonomo/Provider/statemanage.dart';
+import 'package:tonomo/Screens/reservation_screen.dart';
 import 'package:tonomo/Widgets/dashboard_widget_container.dart';
 import 'package:tonomo/Widgets/labeltext_widget.dart';
 import 'package:tonomo/main.dart';
@@ -48,7 +50,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 //       legend[item.name] = item.name.length.toString();
     }
     print(dataMap);
-
     return Container(
       height: screenHeight,
       width: widget.expandedWidth,
@@ -128,7 +129,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             const LabelTextWidget(
-                                title: '2',
+                                title: '0',
                                 textColor: Colors.red,
                                 fontSize: 40),
                             const LabelTextWidget(
@@ -158,29 +159,29 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       title: 'Check-Outs',
                       height: screenHeight * 0.4 - 20,
                       width: screenWidth * 0.2 - 50,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 104),
+                      child:  Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 104),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            LabelTextWidget(
-                                title: '2',
+                            const LabelTextWidget(
+                                title: '0',
                                 textColor: Colors.red,
                                 fontSize: 40),
-                            LabelTextWidget(
+                            const LabelTextWidget(
                                 title: 'Overdue',
                                 textColor: Colors.black,
                                 fontSize: 17),
-                            SizedBox(
+                            const SizedBox(
                               height: 60,
                             ),
                             LabelTextWidget(
-                                title: '0',
+                                title: '${itemList.length.toInt() == 0 ? 0 : itemList.length.toInt()}',
                                 textColor: Colors.black,
                                 fontSize: 40),
-                            LabelTextWidget(
+                            const LabelTextWidget(
                                 title: 'Open',
                                 textColor: Colors.black,
                                 fontSize: 17),
@@ -192,30 +193,35 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 ),
                 DashBoardContainerWidget(
                   titleColor: AllColors.kReserVationListColor,
-                    title: 'Open Observation',
+                    title: 'Open Reservation',
                     height: screenHeight * 0.4 - 20,
                     width: screenWidth * 0.4 - 50,
                     child: reserVationList.isEmpty ? const Center(child: Text('No Reservation Found'),) : ListView.builder(
                         padding: EdgeInsets.zero,
                         itemCount: reserVationList.length,
                         itemBuilder: (_, index) {
-                         
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10).copyWith(top: 0),
                             child: ExpansionTile(
-                              backgroundColor:AllColors.kExpansionTileCOlor ,
-                              textColor: Colors.white, 
-                              iconColor: Colors.white,
-                              collapsedShape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))
+                              // backgroundColor:AllColors.kExpansionTileCOlor ,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12), 
+                                side: BorderSide.none
                               ),
-                              collapsedBackgroundColor: AllColors.kExpansionTileCOlor, 
-                              collapsedTextColor: Colors.white, 
-                              collapsedIconColor: Colors.white,
+                              textColor: Colors.black, 
+                              iconColor: Colors.black,
+                              collapsedShape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(12), 
+                                bottomRight: Radius.circular(12))
+                              ),
+                              // collapsedBackgroundColor: AllColors.kExpansionTileCOlor, 
+                              collapsedTextColor: Colors.black, 
+                              collapsedIconColor: Colors.black,
                               leading: CircleAvatar(
                                 radius: 17,
                                 backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-                                child:  Text(reserVationList[index].name.substring(0,1))) ,
+                                child: Text(reserVationList[index].name.substring(0,1))) ,
                               title: Text(reserVationList[index].name),
                               children: [
                                 Container(
@@ -223,6 +229,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Colors.grey.shade200,
+                                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), 
+                                    bottomRight: Radius.circular(12))
                                   ),
                                   child: Column(
                                     children: [
@@ -291,106 +299,114 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           const SizedBox(
                             height: 15,
                           ),
-                          Container(
-                            height: 40,
-                            width: 150,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey)),
-                            child: const Center(
-                              child: Text('New Check-outs'),
+                          InkWell(
+                            onTap: (){
+                              context.read<PageState>().updatePage = const ReservationScreen();
+                              context.read<PageState>().currentSelect=4;
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey)),
+                              child: const Center(
+                                child: Text('New Check-outs'),
+                              ),
                             ),
                           )
                         ],
                       ),
                     )),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    DashBoardContainerWidget( 
-                      titleColor: AllColors.kObservationColor,
-                      title: 'Reservations',
-                      height: screenHeight * 0.4 - 20,
-                      width: screenWidth * 0.2 - 20,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 104),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            LabelTextWidget(
-                                title: '2',
-                                textColor: Colors.red,
-                                fontSize: 40),
-                            LabelTextWidget(
-                                title: 'Overdue',
-                                textColor: Colors.black,
-                                fontSize: 17),
-                            SizedBox(
-                              height: 60,
-                            ),
-                            LabelTextWidget(
-                                title: '0',
-                                textColor: Colors.black,
-                                fontSize: 40),
-                            LabelTextWidget(
-                                title: 'Booked',
-                                textColor: Colors.black,
-                                fontSize: 17),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    DashBoardContainerWidget(
-                      titleColor: AllColors.kOpenCheckoutColor,
-                      title: 'Check-Outs',
-                      height: screenHeight * 0.4 - 20,
-                      width: screenWidth * 0.2 - 40,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 104),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            LabelTextWidget(
-                                title: '2',
-                                textColor: Colors.red,
-                                fontSize: 40),
-                            LabelTextWidget(
-                                title: 'Overdue',
-                                textColor: Colors.black,
-                                fontSize: 17),
-                            SizedBox(
-                              height: 60,
-                            ),
-                            LabelTextWidget(
-                                title: '0',
-                                textColor: Colors.black,
-                                fontSize: 40),
-                            LabelTextWidget(
-                                title: 'Open',
-                                textColor: Colors.black,
-                                fontSize: 17),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                DashBoardContainerWidget(
-                  titleColor: AllColors.kObservationColor,
-                    title: 'Open Observation',
-                    height: screenHeight * 0.4 - 20,
-                    width: screenWidth * 0.4 - 85,
-                    child: const Text('ListView')),
+                // Row(
+                //   mainAxisSize: MainAxisSize.min,
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     DashBoardContainerWidget( 
+                //       titleColor: AllColors.kObservationColor,
+                //       title: 'Reservations',
+                //       height: screenHeight * 0.4 - 20,
+                //       width: screenWidth * 0.2 - 20,
+                //       child: const Padding(
+                //         padding: EdgeInsets.symmetric(horizontal: 104),
+                //         child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           crossAxisAlignment: CrossAxisAlignment.center,
+                //           mainAxisSize: MainAxisSize.max,
+                //           children: [
+                //             LabelTextWidget(
+                //                 title: '2',
+                //                 textColor: Colors.red,
+                //                 fontSize: 40),
+                //             LabelTextWidget(
+                //                 title: 'Overdue',
+                //                 textColor: Colors.black,
+                //                 fontSize: 17),
+                //             SizedBox(
+                //               height: 60,
+                //             ),
+                //             LabelTextWidget(
+                //                 title: '0',
+                //                 textColor: Colors.black,
+                //                 fontSize: 40),
+                //             LabelTextWidget(
+                //                 title: 'Booked',
+                //                 textColor: Colors.black,
+                //                 fontSize: 17),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       width: 10,
+                //     ),
+                //     DashBoardContainerWidget(
+                //       titleColor: AllColors.kOpenCheckoutColor,
+                //       title: 'Check-Outs',
+                //       height: screenHeight * 0.4 - 20,
+                //       width: screenWidth * 0.2 - 40,
+                //       child: const Padding(
+                //         padding: EdgeInsets.symmetric(horizontal: 104),
+                //         child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           crossAxisAlignment: CrossAxisAlignment.center,
+                //           mainAxisSize: MainAxisSize.max,
+                //           children: [
+                //             LabelTextWidget(
+                //                 title: '2',
+                //                 textColor: Colors.red,
+                //                 fontSize: 40),
+                //             LabelTextWidget(
+                //                 title: 'Overdue',
+                //                 textColor: Colors.black,
+                //                 fontSize: 17),
+                //             SizedBox(
+                //               height: 60,
+                //             ),
+                //             LabelTextWidget(
+                //                 title: '0',
+                //                 textColor: Colors.black,
+                //                 fontSize: 40),
+                //             LabelTextWidget(
+                //                 title: 'Open',
+                //                 textColor: Colors.black,
+                //                 fontSize: 17),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // DashBoardContainerWidget(
+                //   titleColor: AllColors.kObservationColor,
+                //     title: 'Open Observation',
+                //     height: screenHeight * 0.4 - 20,
+                //     width: screenWidth * 0.4 - 85,
+                //     child: const Text('ListView')),
               ],
             ),
           )),
     );
   }
 }
+
+

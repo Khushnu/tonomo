@@ -7,8 +7,9 @@ class SignInButtonWidget extends StatefulWidget {
       required this.width,
       required this.title,
       required this.bgColor,
-      this.ontap});
+      this.ontap, required this.height});
   final double width;
+  final double height;
   final String title;
   final Color bgColor;
   final Function()? ontap;
@@ -24,7 +25,7 @@ class _SignInButtonWidgetState extends State<SignInButtonWidget> {
     return GestureDetector(
       onTap: widget.ontap,
       child: Container(
-        height: 40,
+        height: widget.height,
         width: widget.width,
         decoration: BoxDecoration(
           color: widget.bgColor,
@@ -33,9 +34,10 @@ class _SignInButtonWidgetState extends State<SignInButtonWidget> {
         child: Center(
           child: Text(
             widget.title,
-            style: const TextStyle(
+            style:  TextStyle(
                 color: Colors.black,
                 fontFamily: 'Inter',
+                fontSize: screenHeight < 700 ? 20 : screenHeight * 0.1 - 80 ,
                 fontWeight: FontWeight.bold),
           ),
         ),

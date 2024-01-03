@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tonomo/Provider/statemanage.dart';
 import 'package:tonomo/Services/dummyreservation.dart';
+import 'package:tonomo/Services/dummyuser.dart';
 import 'package:tonomo/Widgets/Reservation%20Screen%20Widgets/stepper_widgert.dart';
 import 'package:tonomo/Widgets/labeltext_widget.dart';
 import 'package:tonomo/Widgets/textfield_widget.dart';
@@ -21,6 +22,7 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
   TextEditingController userText = TextEditingController();
   TextEditingController itemText = TextEditingController();
  
+ DummyUser? initialValue;
 
   Future<void> showDates(TextEditingController text) async {
     final DateTime? pick = await showDatePicker(
@@ -39,7 +41,7 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      contentPadding: const EdgeInsets.only(bottom: 20).copyWith(bottom: 0),
+      contentPadding: const EdgeInsets.only(bottom: 20).copyWith(bottom: 0,),
       // insetAnimationCurve: Curves.bounceIn,
       // insetAnimationDuration: const Duration(milliseconds: 500),
       shape: OutlineInputBorder(
@@ -49,38 +51,44 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
           )),
       // backgroundColor: Colors.white,
       content: Container(
-        height: MediaQuery.of(context).size.height * 0.8 - 25,
-        width: MediaQuery.of(context).size.width * 0.6 - 25,
+        height: MediaQuery.of(context).size.height * 0.8 + 10,
+        width: MediaQuery.of(context).size.width * 0.5 ,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16), color: Colors.white),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.1 - 50,
-              width: MediaQuery.of(context).size.width * 0.6,
-              padding: const EdgeInsets.symmetric(horizontal: 45),
-              decoration: BoxDecoration(
-                  color: Colors.indigo.shade200,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.indigo.shade200,
-                  )),
-              child: const Row(
-                children: [
-                  LabelTextWidget(
-                      title: 'Add Reservation',
-                      textColor: Colors.white,
-                      fontSize: 18)
-                ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 49, vertical: 10),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.1 - 50,
+                width: MediaQuery.of(context).size.width * 0.6,
+                child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const LabelTextWidget(
+                        title: 'Add Reservation',
+                        textColor: Colors.black,
+                        fontSize: 18), 
+                              InkWell(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.grey.shade100, 
+                                  child: const Icon(Icons.close),
+                                ),
+                              )
+                  ],
+                ),
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 5,
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,10 +118,25 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
                       const SizedBox(
                         height: 10,
                       ),
-                      TextFieldWidget(
-                          textEditingController: userText,
-                          hintText: 'Add User',
-                          textFieldWidth: screenWidth * 0.2),
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          value: initialValue,
+                          hint: const Text('Select User'),
+                        items: dumyUser.map((e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.name),)).toList(),
+                        onChanged: (value){
+                          setState(() {
+                            initialValue = value!;
+                          });
+                        },))
+                      // TextFieldWidget(
+                      //     textEditingController: userText,
+                      //     hintText: 'Add User',
+                      //     textFieldWidth: screenWidth * 0.2, 
+                      //     onTap: (){
+
+                      //     },),
                     ],
                   ),
                   Column(
@@ -147,70 +170,71 @@ class _ReservationAddWidgetState extends State<ReservationAddWidget> {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 90),
+              padding: EdgeInsets.symmetric(horizontal: 25),
               child: StepperWidget(),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              child: InkWell(
+                        onTap: () {
+              try {
+                var fromparse = DateFormat('dd/MM/yyyy').parseStrict(fromDate.text);
+              var toparse = DateFormat('dd/MM/yyyy').parseStrict(toDate.text);
+              
+                Duration duration = toparse.difference(fromparse);
+                // int days = duration.inDays; 
+              
+              
+              setState(() {
+                context.read<StateManagement>().addReserVation(DummyReservation(
+                    name: itemText.text,
+                    from: fromparse,
+                    to: toparse,
+                    duration: '${duration.inDays ==0?duration.inHours:duration.inDays}',
+                    user: initialValue!.name,
+                    items: itemText.text));
+              });
+              
+              Navigator.of(context).pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  content: const Text('Reservation Saved Successfully')));
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  content:  Text('Error $e')));
+              }
+              
+              },
+                        child: Container(
+              height: screenHeight * 0.1 - 49,
+              width: screenWidth * 0.6 - 25,
+              decoration: BoxDecoration(
+                  color: Colors.indigo.shade200,
+                  borderRadius: BorderRadius.circular(10)),
+              child: const Center(
+                child: Text(
+                  'Confirm Reservation',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+                        ),
+                      ),
+            )
           ],
         ),
       ),
-      actions: [
-        InkWell(
-          onTap: () {
-            try {
-              var fromparse = DateFormat('dd/MM/yyyy').parseStrict(fromDate.text);
-            var toparse = DateFormat('dd/MM/yyyy').parseStrict(toDate.text);
-
-              Duration duration = toparse.difference(fromparse);
-              // int days = duration.inDays; 
-            
-
-            setState(() {
-              context.read<StateManagement>().addReserVation(DummyReservation(
-                  name: itemText.text,
-                  from: fromparse,
-                  to: toparse,
-                  duration: '${duration.inDays ==0?duration.inHours:duration.inDays}',
-                  user: userText.text,
-                  items: itemText.text));
-            });
-
-            Navigator.of(context).pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                content: const Text('Reservation Saved Successfully')));
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                content:  Text('Error $e')));
-            }
-            
-          },
-          child: Container(
-            height: screenHeight * 0.1 - 49,
-            width: screenWidth * 0.6 - 25,
-            decoration: BoxDecoration(
-                color: Colors.indigo.shade200,
-                borderRadius: BorderRadius.circular(10)),
-            child: const Center(
-              child: Text(
-                'Confirm Reservation',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        )
-      ],
     );
   }
 }

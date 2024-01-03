@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tonomo/Constants/colors.dart';
+import 'package:tonomo/Provider/pagenavigations.dart';
 import 'package:tonomo/Screens/dashboard_screen.dart';
 import 'package:tonomo/Widgets/leftside_menu_widget.dart';
 import 'package:tonomo/Widgets/topbar_widget.dart';
@@ -16,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double widthExpanded = 0;
   double centerContainerExpandedWidth =0;
   bool isExpanded = true;
+  bool isContainerOpen = false; 
   Widget selectedPage=const DashBoardScreen();
 
   
@@ -34,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) { 
     screenHeight = MediaQuery.sizeOf(context).height; 
     screenWidth = MediaQuery.sizeOf(context).width;  
-    widthExpanded = isExpanded ? screenWidth * 0.1 + 50 : screenWidth * 0.1 - 105 ; 
+    widthExpanded = isExpanded ? screenWidth * 0.1 + 60 : screenWidth * 0.1 - 101 ; 
     centerContainerExpandedWidth = isExpanded ? screenWidth * 0.9 - 90 :screenWidth * 0.9 + 70   ; 
     return  Scaffold(
       backgroundColor: AllColors.kMainbackgorundColor,
@@ -57,10 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     leftContinerHegit: screenHeight,
                     leftContainerWidth: widthExpanded, 
                     isExpanded: isExpanded,
+                    bottomNameButton: (){
+                      setState(() {
+                        isContainerOpen = !isContainerOpen;
+                      });
+                    },
                     ontap: (){ 
                       setState(() {
                       });
-                    }, onExpand: expandedFunction, changePage: changePage, 
+                    }, onExpand: expandedFunction, 
+                    changePage: changePage, 
+                    isBottomMenu: isContainerOpen, 
                    ),
              ),
         ), 
@@ -75,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(12), 
               color: AllColors.kDashboardBackground
              ),
-             child: selectedPage,
+             child: context.watch<PageState>().pageName,
             ),
           ),
         )
@@ -83,3 +93,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

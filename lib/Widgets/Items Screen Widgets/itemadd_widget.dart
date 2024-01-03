@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tonomo/Constants/colors.dart';
 import 'package:tonomo/Provider/statemanage.dart';
 import 'package:tonomo/Services/dummymodel.dart';
 import 'package:tonomo/Widgets/labeltext_widget.dart';
@@ -94,31 +93,43 @@ if (result != null) {
           )),
       // backgroundColor: Colors.white,
       content: Container(
-        height: MediaQuery.of(context).size.height * 0.8 - 25,
+        height: MediaQuery.of(context).size.height * 0.8 + 60,
         width: MediaQuery.of(context).size.width * 0.6 - 25,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16), color: Colors.white),
+            borderRadius: BorderRadius.circular(16), 
+            color: Colors.white),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.1 - 50,
-              width: MediaQuery.of(context).size.width * 0.6,
-              padding: const EdgeInsets.symmetric(horizontal: 45),
-              decoration: BoxDecoration(
-                  color: Colors.indigo.shade200,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.indigo.shade200,
-                  )),
-              child: const Row(
-                children: [
-                  LabelTextWidget(
-                      title: 'Add Reservation',
-                      textColor: Colors.white,
-                      fontSize: 18)
-                ],
+            Padding(
+
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.1 - 50,
+                width: MediaQuery.of(context).size.width * 0.6,
+               
+              
+                child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const LabelTextWidget(
+                            title: 'Add Reservation',
+                            textColor: Colors.black,
+                            fontSize: 18),
+              
+                            InkWell(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.grey.shade100, 
+                                child: const Icon(Icons.close),
+                              ),
+                            )
+              
+                  ],
+                )
               ),
             ),
             const SizedBox(
@@ -133,7 +144,7 @@ if (result != null) {
                 width: screenWidth * 0.7,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                   // color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -188,7 +199,8 @@ if (result != null) {
                                 ),
                                 TextFieldWidget(
                                     inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
+                                      FilteringTextInputFormatter.digitsOnly 
+                                      
                                     ],
                                     textEditingController: modelText,
                                     hintText: 'e.g 23141',
@@ -250,19 +262,20 @@ if (result != null) {
                             textColor: Colors.black54,
                             fontSize: 16),
                         const SizedBox(
-                          height: 10,
+                          height: 8,
                         ),
                        Container(
                         width: screenWidth * 0.2,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                         decoration: BoxDecoration(
-                          color: Colors.white, 
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey.shade300), 
                           borderRadius: BorderRadius.circular(5)
                         ),
                          child: DropdownButtonHideUnderline(
                            child: DropdownButton(
                            value: initalDropDown,
-                            hint: const Text('Select Category'),
+                            hint:  Text('Select Category', style: TextStyle(color: Colors.grey.shade400),),
                             items: dropDownItems.map((e) => DropdownMenuItem(
                             value: e,
                             child: Text(e)) ).toList(), onChanged: (value){
@@ -281,77 +294,86 @@ if (result != null) {
             const SizedBox(
               height: 10,
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: screenHeight * 0.2 - 21, 
-                width: screenWidth, 
-               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18), 
-                color: AllColors.kStatusWidgetCOlor.withOpacity(0.4)
-               ), 
-              child: Center(
-                child: image == null ? InkWell(
-                 onTap: () {
-                   setState(() {
-                       pickImageFunction();
-                   });
-                 },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset('Images/image-gallery.png', height: 40,),
-                      const Text('Select Image'),
-                    ],
-                  ),
-                ) : isImageLoading ? const CircularProgressIndicator() : Image.file(image!, height: screenHeight * 0.2, width: screenWidth, fit: BoxFit.fill, ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+                child: Container(
+                  height: screenHeight * 0.2 - 41, 
+                  width: screenWidth * 0.4 + 20, 
+                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18), 
+                  color: Colors.grey.shade200
+                 ), 
+                child: Center(
+                  child: image == null ? InkWell(
+                   onTap: () {
+                     setState(() {
+                         pickImageFunction();
+                     });
+                   },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('Images/image-gallery.png', height: 40,),
+                        const Text('Select Image'),
+                      ],
+                    ),
+                  ) : isImageLoading ? const CircularProgressIndicator() : Image.file(image!, height: screenHeight * 0.2, width: screenWidth * 0.5, fit: BoxFit.fill, ),
+                ),
+                ),
               ),
+            ), 
+            Align( 
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+                child: InkWell(
+                          onTap: () {
+                setState(() {
+                  context.read<StateManagement>().addItem(DummyModel(
+                      name: itemText.text,
+                      category: initalDropDown!,
+                      brand: brandText.text,
+                      model: int.parse(modelText.text),
+                      quantity: quantityText.text,
+                      location: locationText.text, 
+                      image: image!
+                      ));
+                });
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    content: const Text('Item Saved Successfully')));
+                Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            height: screenHeight * 0.1 - 49,
+                            width: screenWidth * 0.4 + 20,
+                            decoration: BoxDecoration(
+                                color: Colors.indigo.shade200,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: const Center(
+                              child: Text(
+                                'Add Item',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
               ),
             )
           ],
+          
         ),
       ),
-      actions: [
-        InkWell(
-          onTap: () {
-            setState(() {
-              context.read<StateManagement>().addItem(DummyModel(
-                  name: itemText.text,
-                  category: initalDropDown!,
-                  brand: brandText.text,
-                  model: int.parse(modelText.text),
-                  quantity: quantityText.text,
-                  location: locationText.text, 
-                  image: image!
-                  ));
-            });
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 590, vertical: 30),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                content: const Text('Item Saved Successfully')));
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            height: screenHeight * 0.1 - 49,
-            width: screenWidth * 0.6 - 25,
-            decoration: BoxDecoration(
-                color: Colors.indigo.shade200,
-                borderRadius: BorderRadius.circular(10)),
-            child: const Center(
-              child: Text(
-                'Add Item',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        )
-      ],
+     
     );
   }
 }

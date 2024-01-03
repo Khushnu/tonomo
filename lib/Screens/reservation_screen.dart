@@ -21,11 +21,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
   String dropDownValue = 'name';
   int isvalue = 12345;
   bool isFilterSelected = false;
+  final searchText = TextEditingController();
   List dropDownItems = <String>[
     'name',
-    'status',
-    'brand',
-    'model',
+    'from',
+    'to',
+    'user',
     'Ascending',
     'Dscending'
   ];
@@ -44,7 +45,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: screenHeight * 0.1 - 40,
+                height: screenHeight * 0.1 - 38,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -92,6 +93,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           ),
                           child: const Text(
                             'New Reservation',
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ],
@@ -119,6 +121,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 height: 40,
                                 child: TextFieldWidget(
                                   hintText: 'Search',
+                                  textEditingController: searchText,
+                                  onchanged: (p0) {
+                                    context.read<StateManagement>().searchReservation(p0);
+                                  },
                                   textFieldWidth: screenWidth * 0.2,
                                   suffix: const Icon(Icons.search),
                                 )),
@@ -153,6 +159,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                       onSelected: (String? value) {
                                         setState(() {
                                           dropDownValue = value!;
+                                          context.read<StateManagement>().sortReserVation(value, true);
                                         });
                                       },
                                       child: const Row(
@@ -163,6 +170,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                           Icon(Icons.arrow_drop_down)
                                         ],
                                       ),
+                                      
                                       itemBuilder: (BuildContext context) =>
                                           dropDownItems
                                               .map<PopupMenuItem<String>>((e) =>
@@ -329,11 +337,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               border: Border.all(color: Colors.grey.shade300),
                               borderRadius: BorderRadius.circular(12)),
                           child: DataTable(
-                              // showCheckboxColumn: true,
-
+                              // showCheckboxColumn: true,      
                               columns: [
                                 DataColumn(
-                                  onSort: (columnIndex, ascending) {},
+                                  onSort: (columnIndex, ascending) {
+                                    setState(() {              
+                                    });
+                                  },
                                   // numeric: true,
                                   label: const LabelTextWidget(
                                       title: 'Name',
@@ -424,7 +434,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                 child: InkWell(
                                                   onTap: (){
                                                     setState(() {
-                                                      context.read<StateManagement>().removeReservation(index);
+                                                      context.read<StateManagement>().removeReservation(e);
                                                       ScaffoldMessenger.of(context).showSnackBar(
                                                         SnackBar(
                                                           behavior: SnackBarBehavior.floating,
